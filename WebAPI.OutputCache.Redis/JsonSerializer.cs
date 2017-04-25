@@ -1,20 +1,17 @@
-﻿using Jil;
+﻿using Newtonsoft.Json;
 
 namespace WebAPI.OutputCache.Redis
 {
-    /// <summary>
-    ///     Facade for <see cref="Jil.JSON" />.
-    /// </summary>
     public class JsonSerializer : IJsonSerializer
     {
-        public T DeserializeObject<T>(string json, Options options = null)
+        public T DeserializeObject<T>(string json)
         {
-            return JSON.Deserialize<T>(json,options);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public string SerializeObject<T>(T value, Options options = null)
+        public string SerializeObject<T>(T value)
         {
-            return JSON.Serialize(value, options);
+            return JsonConvert.SerializeObject(value);
         }
     }
 }

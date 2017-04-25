@@ -15,7 +15,7 @@
     </summary>
     <tags>redis aspnet webapi webapi2 cache output outputcache</tags>
     <dependencies>
-      <dependency id="Jil" version="2.12.1"/>
+      <dependency id="Newtonsoft.Json" version="9.0.1"/>
       <dependency id="StackExchange.Redis" version="1.0.488"  />
       <dependency id="Strathweb.CacheOutput.WebApi2" version="0.9.0" />
     </dependencies>

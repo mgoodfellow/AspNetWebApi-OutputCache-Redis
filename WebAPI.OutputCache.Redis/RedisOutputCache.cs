@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jil;
 using StackExchange.Redis;
 using WebApi.OutputCache.Core.Cache;
 
@@ -12,15 +11,12 @@ namespace WebAPI.OutputCache.Redis
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IRedisConnectionSettings _connectionSettings;
         private readonly Lazy<IConnectionMultiplexer> _multiplexer;
-        readonly Options _options;
 
         public RedisOutputCache(IJsonSerializer jsonSerializer, IRedisConnectionSettings connectionSettings)
         {
             _jsonSerializer = jsonSerializer;
             _connectionSettings = connectionSettings;
             _multiplexer = new Lazy<IConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(_connectionSettings.ConnectionString));
-
-            _options = null;//TODO:
         }
 
         private IDatabase Db => _multiplexer.Value.GetDatabase(_connectionSettings.Db);
@@ -39,7 +35,7 @@ namespace WebAPI.OutputCache.Redis
             string redisValue = Db.StringGet(key);
 
             if (!string.IsNullOrEmpty(redisValue))
-                return _jsonSerializer.DeserializeObject<T>(redisValue, _options);
+                return _jsonSerializer.DeserializeObject<T>(redisValue);
 
             return null;
         }
@@ -61,8 +57,8 @@ namespace WebAPI.OutputCache.Redis
 
         public void Add(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
         {
-            TimeSpan timeSpan = expiration.DateTime.Subtract(DateTime.Now);
-            Db.StringSet(key, _jsonSerializer.SerializeObject(o, _options), timeSpan);
+            var timeSpan = expiration.DateTime.Subtract(DateTime.Now);
+            Db.StringSet(key, _jsonSerializer.SerializeObject(o), timeSpan);
         }
 
         //TODO: use SCAN to get keys
